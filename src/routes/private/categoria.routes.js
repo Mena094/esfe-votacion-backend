@@ -1,7 +1,6 @@
 const router = require("express").Router()
+const {getItems} = require("../../controllers/categoria.controllers")
 
-router.get("/", (req,res)=>{
-  res.send({categoria:1})
-})
+router.get("/", getItems)
 
 module.exports = router

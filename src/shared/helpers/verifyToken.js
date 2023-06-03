@@ -4,8 +4,7 @@ const verifyToken = (req, res, next) => {
   const bearerHeader = req.headers['authorization'];
 
   if (typeof bearerHeader !== undefined && typeof bearerHeader === 'string') {
-    const token = bearerHeader.split(' ')[1]; 
-    console.log(token)
+    const token = bearerHeader.split(' ')[1];
 
     jwt.verify(token, "usercred", (error, authData) => {
       if (error) {
