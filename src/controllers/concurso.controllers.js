@@ -29,7 +29,7 @@ const updateItem = async (req,res)=>{
     res.status(404).json({error:"No existe"})
   }
   else{
-    res.status(204)
+    res.json(resul)
   }
 }
 
@@ -41,7 +41,7 @@ const deleteItem = async (req,res)=>{
     res.status(404).json({error:"No existe"})
   }
   else{
-    res.json(resul)
+    res.status(204)
   }
 }
 

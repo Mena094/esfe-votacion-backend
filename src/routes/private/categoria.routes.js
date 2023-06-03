@@ -1,6 +1,14 @@
 const router = require("express").Router()
-const {getItems} = require("../../controllers/categoria.controllers")
+const {
+  readItems,
+  createItem,
+  updateItem ,
+  deleteItem} = require("../../controllers/categoria.controllers")
 
-router.get("/", getItems)
+router.get("/", readItems)
+router.post("/", createItem)
+router.put("/", updateItem)
+router.delete("/:Id", deleteItem)
+
 
 module.exports = router
