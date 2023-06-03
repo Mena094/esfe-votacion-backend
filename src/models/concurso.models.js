@@ -41,7 +41,7 @@ const updateItem = async (body) => {
 
     if(result.changedRows  === 0) return -2
     const [rows] = await pool.query("SELECT * FROM Concurso WHERE Id = ?", [Id])
-    return rows; // Devuelve el resultado de la actualización
+    return rows[0]; // Devuelve el resultado de la actualización
 
   } catch (e) {
     console.log("**** FALLOOOO ****")
