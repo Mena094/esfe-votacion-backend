@@ -10,10 +10,8 @@ const readItems = async () =>{
   }
 }
 
-const createItem = async (body) => {
+const createItem = async ({ Nombre, Descripcion, Inicio, Fin }) => {
   try {
-    const { Nombre, Descripcion, Inicio, Fin } = body;
-
     const [exist] = await pool.query("SELECT * FROM Concurso WHERE Nombre = ?", [Nombre]);
     if (exist.length > 0) {
       return -1; // Concurso con el mismo nombre ya existe
@@ -39,31 +37,26 @@ const updateItem = async (body) => {
 
     const query = "UPDATE Concurso SET Nombre = ?, Descripcion = ?, Inicio = ?, Fin = ? WHERE Id = ?";
     const values = [Nombre, Descripcion, Inicio, Fin, Id];
-    const [result] = await pool.query(query, values);
+    const [result] = await pool.query(query, values)
 
-    if(result.affectedRows === 0) return -2
-
+    if(result.changedRows  === 0) return -2
     const [rows] = await pool.query("SELECT * FROM Concurso WHERE Id = ?", [Id])
     return rows; // Devuelve el resultado de la actualización
 
   } catch (e) {
+    console.log("**** FALLOOOO ****")
     console.error(e);
     return 0; 
   }
 };
 
-
 const deleteItem = async (id) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM Concurso WHERE Id = ?", [id]);
-    if (rows.length === 0) {
-      return -2; // No se encontró el concurso con el Id especificado
-    }
-
     const query = "DELETE FROM Concurso WHERE Id = ?";
-    const result = await pool.query(query, [id]);
+    const [result] = await pool.query(query, [id]);
+    if(result.affectedRows === 0) return -2
 
-    return result; // Devuelve el resultado de la eliminación
+    return 1; // Devuelve el resultado de la eliminación
 
   } catch (e) {
     console.error(e);

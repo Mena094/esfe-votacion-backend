@@ -26,10 +26,10 @@ const updateItem = async (req,res)=>{
   if(resul === 0){
     res.status(500).json({error:"Database error"})
   }else if(resul === -2){ 
-    res.status(409).json({error:"No existe"})
+    res.status(404).json({error:"No existe"})
   }
   else{
-    res.json(resul)
+    res.status(204)
   }
 }
 
@@ -38,7 +38,7 @@ const deleteItem = async (req,res)=>{
   if(resul === 0){
     res.status(500).json({error:"Database error"})
   }else if(resul === -2){ 
-    res.status(409).json({error:"No existe"})
+    res.status(404).json({error:"No existe"})
   }
   else{
     res.json(resul)

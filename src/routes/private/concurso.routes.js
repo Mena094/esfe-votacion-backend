@@ -1,5 +1,9 @@
 const router = require("express").Router()
-const {readItems,createItem,updateItem ,deleteItem} = require("../../controllers/concurso.controllers")
+const {
+  readItems,
+  createItem,
+  updateItem ,
+  deleteItem} = require("../../controllers/concurso.controllers")
 
 router.get("/", readItems)
 router.post("/", createItem)
