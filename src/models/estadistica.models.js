@@ -1,6 +1,6 @@
 const pool = require("../shared/config/db.js")
 
-const getAll = async (Id) =>{
+const getAll = async (Id) => {
   try {
     const query = `
       SELECT c.Id, c.Nombre, c.Descripcion, p.Id AS ParticipanteId, p.Nombre AS ParticipanteNombre, v.Id AS VotoId 
@@ -10,7 +10,7 @@ const getAll = async (Id) =>{
       WHERE c.IdConcurso = ?
       
     `;
-    const [rows] = await pool.query(query,[Id]);
+    const [rows] = await pool.query(query, [Id]);
 
     const categorias = [];
     let currentCategoria = null;
@@ -42,13 +42,12 @@ const getAll = async (Id) =>{
         currentCategoria.Participantes.push(participante);
       }
     }
-
     return categorias;
   } catch (error) {
     console.error(error);
     return null;
   }
-} 
+}
 
 module.exports = {
   getAll

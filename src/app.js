@@ -8,9 +8,9 @@ app.use(cors())
 app.use(express.json())
 
 app.use("/private", verifyToken) //midleware verificar jwt
-app.use("/private",require("./routes/private"))
+app.use("/private", require("./routes/private"))
 
-app.use("/public",require("./routes/public")) 
+app.use("/public", require("./routes/public"))
 
 
 
