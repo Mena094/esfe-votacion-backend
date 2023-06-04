@@ -8,13 +8,13 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, "usercred", (error, authData) => {
       if (error) {
-        res.status(403).json({ error: 'Token inválido' }); 
+        res.status(403).json({ error: 'Token inválido' });
       } else {
         next();
       }
     });
   } else {
-    res.status(403).json({ error: 'Token no proporcionado' }); 
+    res.status(403).json({ error: 'Token no proporcionado' });
   }
 };
 

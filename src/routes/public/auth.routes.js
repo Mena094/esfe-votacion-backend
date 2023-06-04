@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const {getAuth} = require("../../controllers/auth.controllers")
+const { getAuth } = require("../../controllers/auth.controllers")
 
 router.get("/", getAuth)
 

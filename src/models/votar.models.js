@@ -7,8 +7,8 @@ const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
   let values = [Codigo, IdAnio, IdCarrera]
   const [estudiante] = await pool.query(query, values);
 
-  if (estudiante.length <= 0)return -1; // No existe estudiante
-  
+  if (estudiante.length <= 0) return -1; // No existe estudiante
+
   // Obtener Id Estudiante
   const IdEstudiante = estudiante[0].Id
 
@@ -31,7 +31,6 @@ const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
   return {
     success: "nuevo voto agregado"
   }
-
 }
 
 module.exports = {
