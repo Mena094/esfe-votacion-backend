@@ -6,7 +6,7 @@ const getAuth = (req, res) => {
   const resul = authAdmin(credencial)
   if (resul) {
 
-    jwt.sign({ credencial }, 'usercred', (err, token) => {
+    jwt.sign({ credencial }, 'usercred', { expiresIn:"7 days" }, (err, token) => {
       res.json({ token })
     })
 
