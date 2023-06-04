@@ -43,7 +43,7 @@ const deleteItem = async (req, res) => {
     res.status(404).json({ error: "No existe" })
   }
   else {
-    es.status(204)
+    res.status(204)
   }
 }
 

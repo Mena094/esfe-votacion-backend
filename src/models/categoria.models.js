@@ -12,7 +12,7 @@ const readItems = async () => {
 
 const createItem = async ({ Nombre, Descripcion, IdConcurso }) => {
   try {
-    const query = "SELECT * FROM Categoria WHERE Nombre = ? AND IdConcurso = ?"
+    let query = "SELECT * FROM Categoria WHERE Nombre = ? AND IdConcurso = ?"
     const [exist] = await pool.query(query, [Nombre, IdConcurso]);
 
     if (exist.length > 0) return -1; // Categoria con el mismo nombre ya existe

@@ -1,8 +1,18 @@
 const db = require("../models/votar.models")
 
 const votar = async (req, res) => {
-  
-  const resul = await db.votar(req.objectData)
+  const { Codigo, IdAnio, IdCarrera, IdParticipante } = req.body;
+
+  if (
+    Codigo === undefined ||
+    IdAnio === undefined ||
+    IdCarrera === undefined ||
+    IdParticipante === undefined
+  ) {
+    res.status(409).json({ error: "Datos inválidos" });
+    return;
+  }
+  const resul = await db.votar( {Codigo, IdAnio, IdCarrera, IdParticipante } )
 
   if (resul === -1) {
     res.status(409).json({ error: "No existe estudiante con codigo: " + Codigo })

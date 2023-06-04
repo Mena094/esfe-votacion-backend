@@ -2,19 +2,6 @@ const pool = require("../config/db");
 
 const verifyActive = async (req, res, next) => {
   const { Codigo, IdAnio, IdCarrera, IdParticipante } = req.body;
-
-  if (
-    Codigo === undefined ||
-    IdAnio === undefined ||
-    IdCarrera === undefined ||
-    IdParticipante === undefined
-  ) {
-    res.status(409).json({ error: "Datos inválidos" });
-    return;
-  }
-
-  req.objectData = { Codigo, IdAnio, IdCarrera, IdParticipante };
-
   try {
     const categoriaQuery = `
       SELECT IdConcurso
@@ -52,7 +39,7 @@ const verifyActive = async (req, res, next) => {
     }
 
     const { Activo } = concursoActivoRows[0];
-
+    console.log(Activo)
     if (!Activo) {
       res.status(403).json({ error: "El concurso no está activo" });
       return;
@@ -64,3 +51,5 @@ const verifyActive = async (req, res, next) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
+module.exports = verifyActive
