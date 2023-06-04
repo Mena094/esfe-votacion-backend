@@ -1,6 +1,6 @@
 const cors = require("cors")
 const express = require("express")
-const verifyToken = require("./shared/helpers/verifyToken.js")
+const verifyToken = require("./shared/middlewares/verifyToken.js")
 
 const app = express()
 
