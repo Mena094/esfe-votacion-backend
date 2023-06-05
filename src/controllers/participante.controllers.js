@@ -1,5 +1,15 @@
 const db = require("../models/participante.models")
 
+const puntaje = async (req, res) => {
+  const IdParticipante = req.params.Id
+  const { Puntaje } = req.body
+  const resul = await db.puntaje({Puntaje, IdParticipante})
+  if (resul === 0) {
+    res.status(500).json({ error: "Database error" })
+  } else {
+    res.status(204).end()
+  }
+}
 const readItems = async (req, res) => {
   const resul = await db.readItems()
   if (resul === 0) {
@@ -91,10 +101,11 @@ const votar = async (req, res) => {
 }
 
 module.exports = {
+  puntaje,
   readItems,
   readVotoById,
+  votar,
   createItem,
   updateItem,
   deleteItem,
-  votar
 }

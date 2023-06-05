@@ -1,9 +1,11 @@
 const pool = require("../shared/config/db.js")
 
-const puntaje = async () =>{
+const puntaje = async ({Puntaje, IdParticipante}) =>{
   try{
-    const [rows] = await pool.query("SELECT * FROM Participante")
-    return rows
+    query = "UPDATE Puntaje SET Puntaje = ? WHERE IdParticipante = ?";
+    const values = [Puntaje, IdParticipante]
+    const [result] = await pool.query(query, values);
+    return 1
   }catch(e){
     console.error(e)
     return 0
@@ -35,12 +37,23 @@ const createItem = async ({ Nombre, IdCategoria }) => {
     const [exist] = await pool.query(query, [Nombre, IdCategoria]);
     if (exist.length > 0) return -1; // Participante con el mismo nombre ya existe
     
-    const [concurso] = await pool.query("SELECT * FROM Categoria WHERE Id = ?", [IdCategoria]);
-    if (concurso.length < 1) return -2; // No existe categoria
+    const [categoria] = await pool.query("SELECT * FROM Categoria WHERE Id = ?", [IdCategoria]);
+    if (categoria.length < 1) return -2; // No existe categoria
     
+    const IdConcurso = categoria[0].IdConcurso
+    const [concurso] = await pool.query("SELECT * FROM Concurso WHERE Id = ?", [IdConcurso]);
+    if (concurso.length < 1) return -2; // No existe categoria
+
     query = "INSERT INTO Participante (Nombre, IdCategoria) VALUES (?, ?)";
     const values = [Nombre, IdCategoria];
     const [rows] = await pool.query(query, values);
+
+    if(concurso[0].Tipo === "puntaje"){
+      query = "INSERT INTO Puntaje (IdParticipante, Puntaje) VALUES (?, ?)";
+      const values = [rows.insertId, 0];
+      const [result] = await pool.query(query, values);
+      console.log(result)
+    }
 
     return {
       Id:rows.insertId,
@@ -117,10 +130,12 @@ const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
   }
 }
 module.exports = {
+  puntaje,
   readItems,
   readVotoById,
+  votar,
   createItem,
   updateItem,
   deleteItem,
-  votar
+  
 }

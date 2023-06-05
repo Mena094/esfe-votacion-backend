@@ -1,5 +1,6 @@
 const router = require("express").Router()
 const {
+  puntaje,
   readItems,
   readVotoById,
   createItem,
@@ -16,6 +17,6 @@ router.get("/:Id/voto", readVotoById)
 router.post("/:Id/voto", votar)
 
 // router.get("/:Id/puntaje", readVotoById)
-// router.post("/:Id/puntaje", createItem)
+router.put("/:Id/puntaje", puntaje)
 
 module.exports = router
