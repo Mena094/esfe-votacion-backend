@@ -10,7 +10,17 @@ const readItems = async () => {
   }
 }
 
-const createItem = async ({ Nombre, Descripcion, Activo, Tipo}) => {
+const readCategoriaById = async (Id) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM Categoria WHERE Id = ?", [Id])
+    return rows
+  } catch (e) {
+    console.error(e)
+    return 0
+  }
+}
+
+const createItem = async ({ Nombre, Descripcion, Activo, Tipo }) => {
   try {
     const [exist] = await pool.query("SELECT * FROM Concurso WHERE Nombre = ?", [Nombre]);
     if (exist.length > 0) return -1; // Concurso con el mismo nombre ya existe
@@ -29,7 +39,7 @@ const createItem = async ({ Nombre, Descripcion, Activo, Tipo}) => {
   }
 };
 
-const updateItem = async ({ Id, Nombre, Descripcion, Activo, Tipo}) => {
+const updateItem = async ({ Id, Nombre, Descripcion, Activo, Tipo }) => {
   try {
     let query = `
       UPDATE Concurso 
@@ -64,6 +74,7 @@ const deleteItem = async (id) => {
 
 module.exports = {
   readItems,
+  readCategoriaById,
   createItem,
   updateItem,
   deleteItem

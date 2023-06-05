@@ -1,6 +1,11 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
+  if (req.method === 'GET'){
+    next()
+    return;
+  }; // Pasar al siguiente middleware o ruta sin aplicar el middleware
+  
   const bearerHeader = req.headers['authorization'];
 
   if (typeof bearerHeader !== undefined && typeof bearerHeader === 'string') {

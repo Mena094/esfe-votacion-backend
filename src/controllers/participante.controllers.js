@@ -9,6 +9,20 @@ const readItems = async (req, res) => {
   }
 }
 
+const readVotoById = async (req, res) => {
+  const Id = req.params.Id
+  if( Id === undefined) {
+    res.status(500).json({ error: "Database error" })
+    return;
+  } 
+  const resul = await db.readVotoById(Id)
+  if (resul === 0) {
+    res.status(500).json({ error: "Database error" })
+  } else {
+    res.status(201).json(resul)
+  }
+}
+
 const createItem = async (req, res) => {
   const resul = await db.createItem(req.body)
   if (resul === 0) {
@@ -49,6 +63,7 @@ const deleteItem = async (req, res) => {
 
 module.exports = {
   readItems,
+  readVotoById,
   createItem,
   updateItem,
   deleteItem

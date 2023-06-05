@@ -10,6 +10,16 @@ const readItems = async () =>{
   }
 }
 
+const readVotoById = async (Id) =>{
+  try{
+    const [rows] = await pool.query("SELECT COUNT(*) as Total FROM Voto WHERE Id = ?",[Id])
+    return rows[0]
+  }catch(e){
+    console.error(e)
+    return 0
+  }
+}
+
 const createItem = async ({ Nombre, IdCategoria }) => {
   try {
     let query = "SELECT * FROM Participante WHERE Nombre = ? AND IdCategoria = ?"
@@ -66,6 +76,7 @@ const deleteItem = async (Id) => {
 
 module.exports = {
   readItems,
+  readVotoById,
   createItem,
   updateItem,
   deleteItem

@@ -10,6 +10,16 @@ const readItems = async () => {
   }
 }
 
+const readParticipaneById = async (Id) => {
+  try {
+    const [rows] = await pool.query("SELECT * FROM Participante WHERE Id = ?", [Id])
+    return rows
+  } catch (e) {
+    console.error(e)
+    return 0
+  }
+}
+
 const createItem = async ({ Nombre, Descripcion, IdConcurso }) => {
   try {
     let query = "SELECT * FROM Categoria WHERE Nombre = ? AND IdConcurso = ?"
@@ -67,6 +77,7 @@ const deleteItem = async (id) => {
 
 module.exports = {
   readItems,
+  readParticipaneById,
   createItem,
   updateItem,
   deleteItem
