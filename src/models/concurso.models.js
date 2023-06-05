@@ -12,13 +12,48 @@ const readItems = async () => {
 
 const readCategoriaById = async (Id) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM Categoria WHERE IdConcurso = ?", [Id])
-    return rows
+    const [categories] = await pool.query("SELECT * FROM Categoria WHERE IdConcurso = ?",[Id]);
+
+    for (const category of categories) {
+      const [participants] = await pool.query(
+        "SELECT * FROM Participante WHERE IdCategoria = ?",
+        [category.Id]
+      );
+
+      // Obtener el tipo de concurso desde el objeto "Concurso" asociado a la categoría
+      const [concurso] = await pool.query(
+        "SELECT Tipo FROM Concurso WHERE Id = ?",
+        [category.IdConcurso]
+      );
+
+      // Asignar los participantes a la propiedad "Participantes" de la categoría
+      
+      for (const participant of participants) {
+      
+        if (concurso[0].Tipo === "votacion") {
+          const [voteCount] = await pool.query(
+            "SELECT COUNT(*) AS Count FROM Voto WHERE IdParticipante = ?",
+            [participant.Id]
+          );
+          participant.ConteoVotos = voteCount[0].Count;
+        } else if (concurso[0].Tipo === "puntaje") {
+          const [score] = await pool.query(
+            "SELECT Puntaje FROM Puntaje WHERE IdParticipante = ?",
+            [participant.Id]
+          );
+          participant.Puntaje = score[0].Puntaje;
+        }
+      }
+      category.Participantes = participants;
+    }
+
+    return categories;
   } catch (e) {
-    console.error(e)
-    return 0
+    console.error(e);
+    return [];
   }
-}
+};
+
 
 const createItem = async ({ Nombre, Descripcion, Activo, Tipo }) => {
   try {
