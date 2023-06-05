@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  if (req.method === 'GET'){
+  if (req.method === "GET"){
     next()
     return;
-  }; // Pasar al siguiente middleware o ruta sin aplicar el middleware
+  };
+  if (req.path === "/api/votar"){
+    console.log("votar")
+  } 
   
   const bearerHeader = req.headers['authorization'];
 

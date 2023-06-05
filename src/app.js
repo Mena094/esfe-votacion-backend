@@ -1,16 +1,17 @@
 const cors = require("cors")
 const express = require("express")
-const verifyToken = require("./shared/middlewares/verifyToken.js")
+const {verifyToken,verifyJson} = require("./shared/middlewares/index")
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
-app.use("/private", verifyToken) //midleware verificar jwt
-app.use("/private", require("./routes/private"))
+app.use("/api", verifyJson) //midleware verificar json valido
+app.use("/api", verifyToken) //midleware verificar jwt
+app.use("/api", require("./routes"))
 
-app.use("/public", require("./routes/public"))
+
 
 
 
