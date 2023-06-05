@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { getAll } = require("../../controllers/estadistica.controllers")
+const { getAll } = require("../controllers/estadistica.controllers")
 
 router.get("/", getAll)
 

@@ -1,16 +1,15 @@
 const router = require("express").Router()
 const {
   readItems,
-  readVotoById,
+  readCategoriaById,
   createItem,
   updateItem,
-  deleteItem } = require("../../controllers/participante.controllers")
+  deleteItem } = require("../controllers/concurso.controllers")
 
 router.get("/", readItems)
-router.get("/:Id/voto", readVotoById)
+router.get("/:Id/categoria", readCategoriaById)
 router.post("/", createItem)
 router.put("/", updateItem)
 router.delete("/:Id", deleteItem)
-
 
 module.exports = router

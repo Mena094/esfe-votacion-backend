@@ -4,7 +4,7 @@ const {
   readParticipaneById,
   createItem,
   updateItem,
-  deleteItem } = require("../../controllers/categoria.controllers")
+  deleteItem } = require("../controllers/categoria.controllers")
 
 router.get("/", readItems)
 router.get("/:Id/participante", readParticipaneById)
