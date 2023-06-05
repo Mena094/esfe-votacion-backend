@@ -12,7 +12,7 @@ const readItems = async () => {
 
 const readCategoriaById = async (Id) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM Categoria WHERE Id = ?", [Id])
+    const [rows] = await pool.query("SELECT * FROM Categoria WHERE IdConcurso = ?", [Id])
     return rows
   } catch (e) {
     console.error(e)
@@ -48,8 +48,9 @@ const updateItem = async ({ Id, Nombre, Descripcion, Activo, Tipo }) => {
       `
     const values = [Nombre, Descripcion, Activo, Tipo, Id];
     const [result] = await pool.query(query, values)
+    console.log(result)
 
-    if (result.changedRows === 0) return -2
+    if (result.affectedRows === 0) return -2
     const [rows] = await pool.query("SELECT * FROM Concurso WHERE Id = ?", [Id])
     return rows[0]; // Devuelve el resultado de la actualización
 
