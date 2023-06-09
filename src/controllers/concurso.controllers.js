@@ -54,7 +54,7 @@ const deleteItem = async (req, res) => {
     res.status(404).json({ error: "No existe" })
   }
   else {
-    res.status(204).end();
+    res.status(202).json({success:`concurso ${req.params.Id} eliminado`});
   }
 }
 

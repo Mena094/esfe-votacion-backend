@@ -7,7 +7,7 @@ const puntaje = async (req, res) => {
   if (resul === 0) {
     res.status(500).json({ error: "Database error" })
   } else {
-    res.status(204).end()
+    res.status(204).json({success:`puntaje asignado`})
   }
 }
 const readItems = async (req, res) => {
@@ -53,7 +53,7 @@ const deleteItem = async (req, res) => {
     res.status(404).json({ error: "No existe" })
   }
   else {
-    res.status(204).end()
+    res.status(202).json({success:`participante ${req.params.Id} eliminado`})
   }
 }
 

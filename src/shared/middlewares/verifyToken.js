@@ -5,8 +5,11 @@ const verifyToken = (req, res, next) => {
     next()
     return;
   };
-  if (req.path === "/api/votar"){
-    console.log("votar")
+  console.log(req.path)
+  if (req.path === "/votar" || req.path === "/auth"){
+    
+    next()
+    return
   } 
   
   const bearerHeader = req.headers['authorization'];
