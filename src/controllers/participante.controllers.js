@@ -26,7 +26,7 @@ const createItem = async (req, res) => {
   } else if (resul === -1) {
     res.status(409).json({ error: "Ya existe" })
   } else if (resul === -2) {
-    res.status(409).json({ error: "No existe Participante" })
+    res.status(409).json({ error: "No existe Categoria" })
   }
   else {
     res.json(resul)
@@ -73,24 +73,25 @@ const readVotoById = async (req, res) => {
 }
 //votar
 const votar = async (req, res) => {
-  const { Codigo, IdAnio, IdCarrera, IdParticipante } = req.body;
+  const { Codigo, IdAnio, IdCarrera } = req.body;
+  const { Id } = req.params;
 
   if (
     Codigo === undefined ||
     IdAnio === undefined ||
     IdCarrera === undefined ||
-    IdParticipante === undefined
+    Id === undefined
   ) {
     res.status(409).json({ error: "Datos inválidos" });
     return;
   }
-  const resul = await db.votar( {Codigo, IdAnio, IdCarrera, IdParticipante } )
+  const resul = await db.votar( {Codigo, IdAnio, IdCarrera, Id } )
 
   if (resul === -1) {
     res.status(409).json({ error: "No existe estudiante con codigo: " + Codigo })
   }
   else if (resul === -2) {
-    res.status(409).json({ error: "No existe participante con id: " + IdParticipante })
+    res.status(409).json({ error: "No existe participante con id: " + Id })
   }
   else if (resul === -3) {
     res.status(409).json({ error: "Ya votaste por este participante" })

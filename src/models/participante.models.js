@@ -23,7 +23,7 @@ const readItems = async () =>{
 
 const readVotoById = async (Id) =>{
   try{
-    const [rows] = await pool.query("SELECT COUNT(*) as Total FROM Voto WHERE Id = ?",[Id])
+    const [rows] = await pool.query("SELECT COUNT(*) as Total FROM Voto WHERE IdParticipante = ?",[Id])
     return rows[0]
   }catch(e){
     console.error(e)
@@ -97,7 +97,7 @@ const deleteItem = async (Id) => {
 };
 
 //votar
-const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
+const votar = async ({ Codigo, IdAnio, IdCarrera, Id }) => {
 
   //Verificar Existe Estudiante
   let query = "SELECT * FROM Estudiante WHERE Codigo = ? AND IdAnio = ? AND IdCarrera = ?"
@@ -111,14 +111,14 @@ const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
 
   // Verificar Existe Participante
   query = "SELECT * FROM Participante WHERE Id = ?"
-  values = [IdParticipante]
+  values = [Id]
   const [participante] = await pool.query(query, values);
 
   if (participante.length <= 0) return -2; // No existe Participante
 
   // VERIFICAR VOTO EN CATEGORIA Y AGREGAR SI EXISTE
   query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?"
-  values = [IdEstudiante, IdParticipante]
+  values = [IdEstudiante, Id]
   const [exist] = await pool.query(query, values);
 
   if (exist.length > 0) return -3; // Categoria con el mismo IdEstudiante ya existe
