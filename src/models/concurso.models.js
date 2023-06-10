@@ -55,18 +55,18 @@ const readCategoriaById = async (Id) => {
 };
 
 
-const createItem = async ({ Nombre, Descripcion, Activo, Tipo }) => {
+const createItem = async ({ Nombre, Descripcion, Estado, Tipo }) => {
   try {
     const [exist] = await pool.query("SELECT * FROM Concurso WHERE Nombre = ?", [Nombre]);
     if (exist.length > 0) return -1; // Concurso con el mismo nombre ya existe
 
-    const query = "INSERT INTO Concurso (Nombre, Descripcion, Activo, Tipo) VALUES (?, ?, ?, ?)";
-    const values = [Nombre, Descripcion, Activo, Tipo];
+    const query = "INSERT INTO Concurso (Nombre, Descripcion, Estado, Tipo) VALUES (?, ?, ?, ?)";
+    const values = [Nombre, Descripcion, Estado, Tipo];
     const [rows] = await pool.query(query, values);
 
     return {
       Id: rows.insertId,
-      Nombre, Descripcion, Activo, Tipo
+      Nombre, Descripcion, Estado, Tipo
     };
   } catch (e) {
     console.error(e);
@@ -74,14 +74,14 @@ const createItem = async ({ Nombre, Descripcion, Activo, Tipo }) => {
   }
 };
 
-const updateItem = async ({ Id, Nombre, Descripcion, Activo, Tipo }) => {
+const updateItem = async ({ Id, Nombre, Descripcion, Estado, Tipo }) => {
   try {
     let query = `
       UPDATE Concurso 
-      SET Nombre = ?, Descripcion = ?, Activo = ?, Tipo = ? 
+      SET Nombre = ?, Descripcion = ?, Estado = ?, Tipo = ? 
       WHERE Id = ?
       `
-    const values = [Nombre, Descripcion, Activo, Tipo, Id];
+    const values = [Nombre, Descripcion, Estado, Tipo, Id];
     const [result] = await pool.query(query, values)
     console.log(result)
 

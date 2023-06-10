@@ -31,11 +31,11 @@ const readVotoById = async (Id) =>{
   }
 }
 
-const createItem = async ({ Nombre, IdCategoria }) => {
+const createItem = async ({ IdEstudiante, IdCategoria }) => {
   try {
-    let query = "SELECT * FROM Participante WHERE Nombre = ? AND IdCategoria = ?"
-    const [exist] = await pool.query(query, [Nombre, IdCategoria]);
-    if (exist.length > 0) return -1; // Participante con el mismo nombre ya existe
+    let query = "SELECT * FROM Participante WHERE IdEstudiante = ?"
+    const [exist] = await pool.query(query, [IdEstudiante, IdCategoria]);
+    if (exist.length > 0) return -1; // Participante con el mismo IdEstudiante ya existe
     
     const [categoria] = await pool.query("SELECT * FROM Categoria WHERE Id = ?", [IdCategoria]);
     if (categoria.length < 1) return -2; // No existe categoria
@@ -44,8 +44,8 @@ const createItem = async ({ Nombre, IdCategoria }) => {
     const [concurso] = await pool.query("SELECT * FROM Concurso WHERE Id = ?", [IdConcurso]);
     if (concurso.length < 1) return -2; // No existe categoria
 
-    query = "INSERT INTO Participante (Nombre, IdCategoria) VALUES (?, ?)";
-    const values = [Nombre, IdCategoria];
+    query = "INSERT INTO Participante (IdEstudiante, IdCategoria) VALUES (?, ?)";
+    const values = [IdEstudiante, IdCategoria];
     const [rows] = await pool.query(query, values);
 
     if(concurso[0].Tipo === "puntaje"){
@@ -57,7 +57,7 @@ const createItem = async ({ Nombre, IdCategoria }) => {
 
     return {
       Id:rows.insertId,
-      Nombre, IdCategoria
+      IdEstudiante, IdCategoria
     };
   } catch (e) {
     console.error(e);
@@ -67,10 +67,10 @@ const createItem = async ({ Nombre, IdCategoria }) => {
 
 const updateItem = async (body) => {
   try {
-    const { Id, Nombre,IdCategoria } = body;
+    const { Id, IdEstudiante,IdCategoria } = body;
 
-    let query = "UPDATE Participante SET Nombre = ?, IdCategoria = ? WHERE Id = ?";
-    const values = [Nombre, IdCategoria, Id];
+    let query = "UPDATE Participante SET IdEstudiante = ?, IdCategoria = ? WHERE Id = ?";
+    const values = [IdEstudiante, IdCategoria, Id];
     const [result] = await pool.query(query, values)
 
     if(result.changedRows  === 0) return -2
@@ -121,7 +121,7 @@ const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
   values = [IdEstudiante, IdParticipante]
   const [exist] = await pool.query(query, values);
 
-  if (exist.length > 0) return -3; // Categoria con el mismo nombre ya existe
+  if (exist.length > 0) return -3; // Categoria con el mismo IdEstudiante ya existe
 
   query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)"
   const [voto] = await pool.query(query, values);

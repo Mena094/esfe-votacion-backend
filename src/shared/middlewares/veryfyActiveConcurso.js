@@ -23,25 +23,29 @@ const verifyActive = async (req, res, next) => {
 
     const { IdConcurso } = categoriaRows[0];
 
-    const concursoActivoQuery = `
-      SELECT Activo
+    const concursoEstadoQuery = `
+      SELECT Estado
       FROM Concurso
       WHERE Id = ?
       LIMIT 1
     `;
-    const [concursoActivoRows] = await pool.query(concursoActivoQuery, [
+    const [concursoEstadoRows] = await pool.query(concursoEstadoQuery, [
       IdConcurso,
     ]);
 
-    if (concursoActivoRows.length === 0) {
+    if (concursoEstadoRows.length === 0) {
       res.status(404).json({ error: "Concurso no encontrado" });
       return;
     }
 
-    const { Activo } = concursoActivoRows[0];
-    console.log(Activo)
-    if (!Activo) {
+    const { Estado } = concursoEstadoRows[0];
+    console.log(Estado)
+    if (Estado === "no-iniciado") {
       res.status(403).json({ error: "El concurso no está activo" });
+      return;
+    }
+    if (Estado === "finalizado") {
+      res.status(403).json({ error: "El concurso finalizo" });
       return;
     }
 
