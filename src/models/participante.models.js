@@ -97,28 +97,18 @@ const deleteItem = async (Id) => {
 };
 
 //votar
-const votar = async ({ Codigo, IdAnio, IdCarrera, Id }) => {
-
-  //Verificar Existe Estudiante
-  let query = "SELECT * FROM Estudiante WHERE Codigo = ? AND IdAnio = ? AND IdCarrera = ?"
-  let values = [Codigo, IdAnio, IdCarrera]
-  const [estudiante] = await pool.query(query, values);
-
-  if (estudiante.length <= 0) return -1; // No existe estudiante
-
-  // Obtener Id Estudiante
-  const IdEstudiante = estudiante[0].Id
+const votar = async ({ IdEstudiante, IdParticipante }) => {
 
   // Verificar Existe Participante
   query = "SELECT * FROM Participante WHERE Id = ?"
-  values = [Id]
+  values = [IdParticipante]
   const [participante] = await pool.query(query, values);
 
   if (participante.length <= 0) return -2; // No existe Participante
 
   // VERIFICAR VOTO EN CATEGORIA Y AGREGAR SI EXISTE
   query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?"
-  values = [IdEstudiante, Id]
+  values = [IdEstudiante, IdParticipante]
   const [exist] = await pool.query(query, values);
 
   if (exist.length > 0) return -3; // Categoria con el mismo IdEstudiante ya existe

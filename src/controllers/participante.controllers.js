@@ -1,7 +1,7 @@
 const db = require("../models/participante.models")
 
 const puntaje = async (req, res) => {
-  const IdParticipante = req.params.Id
+  const IdParticipante = req.body.Id
   const { Puntaje } = req.body
   const resul = await db.puntaje({Puntaje, IdParticipante})
   if (resul === 0) {
@@ -59,7 +59,7 @@ const deleteItem = async (req, res) => {
 
 // leer votos
 const readVotoById = async (req, res) => {
-  const Id = req.params.Id
+  const Id = req.body.Id
   if( Id === undefined) {
     res.status(500).json({ error: "Database error" })
     return;
@@ -73,25 +73,27 @@ const readVotoById = async (req, res) => {
 }
 //votar
 const votar = async (req, res) => {
-  const { Codigo, IdAnio, IdCarrera } = req.body;
-  const { Id } = req.params;
+  const { IdEstudiante } = req;
+  const {IdParticipante} = req.body;
 
+  console.log({
+    IdEstudiante,IdParticipante
+  })
   if (
-    Codigo === undefined ||
-    IdAnio === undefined ||
-    IdCarrera === undefined ||
-    Id === undefined
+    
+    IdEstudiante === undefined ||
+    IdParticipante === undefined
   ) {
     res.status(409).json({ error: "Datos inválidos" });
     return;
   }
-  const resul = await db.votar( {Codigo, IdAnio, IdCarrera, Id } )
+  const resul = await db.votar( {IdEstudiante, IdParticipante} )
 
   if (resul === -1) {
-    res.status(409).json({ error: "No existe estudiante con codigo: " + Codigo })
+    res.status(409).json({ error: "No existe estudiante con Id: " + IdEstudiante })
   }
   else if (resul === -2) {
-    res.status(409).json({ error: "No existe participante con id: " + Id })
+    res.status(409).json({ error: "No existe participante con Id: " + IdParticipante })
   }
   else if (resul === -3) {
     res.status(409).json({ error: "Ya votaste por este participante" })
