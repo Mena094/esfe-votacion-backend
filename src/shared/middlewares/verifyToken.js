@@ -31,6 +31,7 @@ const verifyTokenAdmin = (req, res, next) => {
 const verifyTokenEstudiante = (req, res, next) =>{
   const bearerHeader = req.headers['authorization'];
   const codigo = req.headers['codigo'];
+  console.log({codigo, bearerHeader})
   if (typeof bearerHeader !== undefined && typeof bearerHeader === 'string') {
     const token = bearerHeader.split(' ')[1];
 

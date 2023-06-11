@@ -97,28 +97,37 @@ const deleteItem = async (Id) => {
 };
 
 //votar
-const votar = async ({ IdEstudiante, IdParticipante }) => {
+const votar = async ({ IdEstudiante, CodigoParticipante }) => {
 
   // Verificar Existe Participante
-  query = "SELECT * FROM Participante WHERE Id = ?"
-  values = [IdParticipante]
+  let query = `SELECT P.Id, E.Codigo
+  FROM Participante P
+  JOIN Estudiante E ON P.IdEstudiante = E.Id
+  WHERE E.Codigo = ?`;
+
+  let values = [CodigoParticipante];
   const [participante] = await pool.query(query, values);
 
   if (participante.length <= 0) return -2; // No existe Participante
 
-  // VERIFICAR VOTO EN CATEGORIA Y AGREGAR SI EXISTE
-  query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?"
-  values = [IdEstudiante, IdParticipante]
+  const IdParticipante = participante[0].Id;
+  console.log(IdParticipante)
+
+  // Verificar si el participante tiene un voto existente
+  query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?";
+  values = [IdEstudiante, IdParticipante];
   const [exist] = await pool.query(query, values);
 
-  if (exist.length > 0) return -3; // Categoria con el mismo IdEstudiante ya existe
+  if (exist.length > 0) return -3; // Voto existente para el participante
 
-  query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)"
+  // Insertar el nuevo voto
+  query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)";
   const [voto] = await pool.query(query, values);
   return {
-    success: "nuevo voto agregado"
-  }
+    success: "Nuevo voto agregado"
+  };
 }
+
 module.exports = {
   puntaje,
   readItems,
