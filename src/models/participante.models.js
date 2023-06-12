@@ -96,22 +96,41 @@ const deleteItem = async (Id) => {
   }
 };
 
-//votar
+
+const verificarConcursoActivo = async (IdCategoria) => {
+  const query = `
+    SELECT Estado
+    FROM Concurso
+    WHERE Id IN (
+      SELECT IdConcurso
+      FROM Categoria
+      WHERE Id = ?
+    )
+  `;
+  const [result] = await pool.query(query, [IdCategoria]);
+  return result.length > 0 && result[0].Estado === 'iniciado';
+};
+
 const votar = async ({ IdEstudiante, CodigoParticipante }) => {
-
-  // Verificar Existe Participante
-  let query = `SELECT P.Id, E.Codigo
-  FROM Participante P
-  JOIN Estudiante E ON P.IdEstudiante = E.Id
-  WHERE E.Codigo = ?`;
-
+  // Verificar la existencia del participante
+  let query = `
+    SELECT P.Id, P.IdCategoria
+    FROM Participante P
+    WHERE P.Codigo = ?
+  `;
   let values = [CodigoParticipante];
   const [participante] = await pool.query(query, values);
 
-  if (participante.length <= 0) return -2; // No existe Participante
+  if (participante.length <= 0) return -2; // No existe participante
 
   const IdParticipante = participante[0].Id;
-  console.log(IdParticipante)
+  const IdCategoria = participante[0].IdCategoria;
+
+  // Verificar si el concurso está activo
+  const concursoActivo = await verificarConcursoActivo(IdCategoria);
+  if (!concursoActivo) {
+    return -4; // Concurso no activo
+  }
 
   // Verificar si el participante tiene un voto existente
   query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?";
@@ -122,11 +141,13 @@ const votar = async ({ IdEstudiante, CodigoParticipante }) => {
 
   // Insertar el nuevo voto
   query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)";
+  values = [IdEstudiante, IdParticipante];
   const [voto] = await pool.query(query, values);
   return {
     success: "Nuevo voto agregado"
   };
-}
+};
+
 
 module.exports = {
   puntaje,

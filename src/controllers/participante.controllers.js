@@ -98,6 +98,9 @@ const votar = async (req, res) => {
   else if (resul === -3) {
     res.status(409).json({ error: "Ya votaste por este participante" })
   }
+  else if (resul === -4) {
+    res.status(409).json({ error: "Concurso no esta activo" })
+  }
   else {
     res.json(resul)
   }
