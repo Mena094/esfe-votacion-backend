@@ -68,7 +68,7 @@ const readVotoById = async (req, res) => {
   if (resul === 0) {
     res.status(500).json({ error: "Database error" })
   } else {
-    res.status(201).json(resul)
+    res.status(200).json(resul)
   }
 }
 //votar

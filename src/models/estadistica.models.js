@@ -49,6 +49,35 @@ const getAll = async (Id) => {
   }
 }
 
+
+
+const getCarrera = async (carreras) => {
+  try {
+    const query = `
+      SELECT c.Nombre AS Carrera, COUNT(v.Id) AS TotalVotos
+      FROM Voto v
+      INNER JOIN Estudiante e ON v.IdEstudiante = e.Id
+      INNER JOIN Carrera c ON e.IdCarrera = c.Id
+      WHERE c.Nombre IN (${carreras.map(() => '?').join(', ')})
+      GROUP BY c.Nombre
+    `;
+    const values = [...carreras];
+    const [rows] = await pool.query(query, values);
+
+    const resultados = rows.map(row => ({
+      Carrera: row.Carrera,
+      TotalVotos: row.TotalVotos
+    }));
+
+    return resultados;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+
 module.exports = {
-  getAll
+  getAll,
+  getCarrera
 }
