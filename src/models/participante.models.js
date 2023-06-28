@@ -114,7 +114,7 @@ const verificarConcursoActivo = async (IdCategoria) => {
 const votar = async ({ IdEstudiante, CodigoParticipante }) => {
   // Verificar la existencia del participante
   let query = `
-    SELECT P.Id, P.IdCategoria
+    SELECT P.Id, P.IdCategoria, P.Nombre
     FROM Participante P
     WHERE P.Codigo = ?
   `;
@@ -125,6 +125,7 @@ const votar = async ({ IdEstudiante, CodigoParticipante }) => {
 
   const IdParticipante = participante[0].Id;
   const IdCategoria = participante[0].IdCategoria;
+  const Nombre = participante[0].Nombre;
 
   // Verificar si el concurso está activo
   const concursoActivo = await verificarConcursoActivo(IdCategoria);
@@ -143,8 +144,10 @@ const votar = async ({ IdEstudiante, CodigoParticipante }) => {
   query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)";
   values = [IdEstudiante, IdParticipante];
   const [voto] = await pool.query(query, values);
+  console.error("as" +  Nombre)
   return {
-    success: "Nuevo voto agregado"
+    success: "Nuevo voto agregado",
+    Nombre:Nombre
   };
 };
 
