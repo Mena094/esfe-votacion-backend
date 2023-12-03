@@ -1,38 +1,36 @@
-const pool = require("../shared/config/db.js")
+const pool = require("../shared/config/db.js");
 
-const votar = async ({ Codigo, IdAnio, IdCarrera, IdParticipante }) => {
+const votar = async ({ Codigo, IdParticipante }) => {
+  try {
+    // Verificar Existe Juez
+    const [juez] = await pool.execute("SELECT * FROM Juez WHERE Codigo = ?", [Codigo]);
 
-  //Verificar Existe Estudiante
-  let query = "SELECT * FROM Estudiante WHERE Codigo = ? AND IdAnio = ? AND IdCarrera = ?"
-  let values = [Codigo, IdAnio, IdCarrera]
-  const [estudiante] = await pool.query(query, values);
+    if (juez.length <= 0) return -1; // No existe Juez
 
-  if (estudiante.length <= 0) return -1; // No existe estudiante
+    // Obtener Id Juez
+    const IdJuez = juez[0].Id;
 
-  // Obtener Id Estudiante
-  const IdEstudiante = estudiante[0].Id
+    // Verificar Existe Participante
+    const [participante] = await pool.execute("SELECT * FROM Participante WHERE Id = ?", [IdParticipante]);
 
-  // Verificar Existe Participante
-  query = "SELECT * FROM Participante WHERE Id = ?"
-  values = [IdParticipante]
-  const [participante] = await pool.query(query, values);
+    if (participante.length <= 0) return -2; // No existe Participante
 
-  if (participante.length <= 0) return -2; // No existe Participante
+    // Verificar Voto en Categoría y Agregar si Existe
+    const [exist] = await pool.execute("SELECT * FROM Voto WHERE IdJuez = ? AND IdParticipante = ?", [IdJuez, IdParticipante]);
 
-  // VERIFICAR VOTO EN CATEGORIA Y AGREGAR SI EXISTE
-  query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?"
-  values = [IdEstudiante, IdParticipante]
-  const [exist] = await pool.query(query, values);
+    if (exist.length > 0) return -3; // Voto ya existe
 
-  if (exist.length > 0) return -3; // Categoria con el mismo nombre ya existe
-
-  query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)"
-  const [voto] = await pool.query(query, values);
-  return {
-    success: "nuevo voto agregado"
+    await pool.execute("INSERT INTO Voto (IdJuez, IdParticipante) VALUES (?, ?)", [IdJuez, IdParticipante]);
+    
+    return {
+      success: "Nuevo voto agregado"
+    };
+  } catch (error) {
+    console.error("Error al procesar la solicitud:", error);
+    return -4; // Manejo de errores
   }
-}
+};
 
 module.exports = {
   votar
-}
+};

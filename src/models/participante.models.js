@@ -111,7 +111,8 @@ const verificarConcursoActivo = async (IdCategoria) => {
   return result.length > 0 && result[0].Estado === 'iniciado';
 };
 
-const votar = async ({ IdEstudiante, CodigoParticipante }) => {
+const votar = async ({ IdJuez, CodigoParticipante, Calificacion}) => {
+  if(Calificacion > 5 || Calificacion < 0) return -5
   // Verificar la existencia del participante
   let query = `
     SELECT P.Id, P.IdCategoria, P.Nombre
@@ -134,15 +135,15 @@ const votar = async ({ IdEstudiante, CodigoParticipante }) => {
   }
 
   // Verificar si el participante tiene un voto existente
-  query = "SELECT * FROM Voto WHERE IdEstudiante = ? AND IdParticipante = ?";
-  values = [IdEstudiante, IdParticipante];
+  query = "SELECT * FROM Voto WHERE IdJuez = ? AND IdParticipante = ?";
+  values = [IdJuez, IdParticipante];
   const [exist] = await pool.query(query, values);
 
   if (exist.length > 0) return -3; // Voto existente para el participante
 
   // Insertar el nuevo voto
-  query = "INSERT INTO Voto (IdEstudiante, IdParticipante) VALUES (?,?)";
-  values = [IdEstudiante, IdParticipante];
+  query = "INSERT INTO Voto (IdJuez, IdParticipante, Calificacion) VALUES (?,?,?)";
+  values = [IdJuez, IdParticipante, Calificacion];
   const [voto] = await pool.query(query, values);
   console.error("as" +  Nombre)
   return {

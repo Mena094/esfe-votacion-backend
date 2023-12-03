@@ -35,10 +35,10 @@ const verifyAuth = (req,res) =>{
   }
 }
 
-const getAuthEstudiante =async (req, res) => {
-  const { Codigo, IdAnio, IdCarrera } = req.body
-  const datos = { Codigo, IdAnio, IdCarrera }
-  const resul = await bd.authEstudiante(datos)
+const getAuthJuez = async (req, res) => {
+  const { Codigo } = req.body
+  const datos = { Codigo }
+  const resul = await bd.authJuez(datos)
   if (resul !== false) {
     jwt.sign({ resul }, resul.Codigo, (err, token) => {
       res.json({ token, codigo:resul.Codigo })
@@ -51,5 +51,5 @@ const getAuthEstudiante =async (req, res) => {
 module.exports = {
   getAuth,
   verifyAuth,
-  getAuthEstudiante
+  getAuthJuez
 }

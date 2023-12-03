@@ -1,5 +1,5 @@
 const router = require("express").Router()
-const { verifyTokenEstudiante } = require("../shared/middlewares/verifyToken")
+const { verifyTokenJuez } = require("../shared/middlewares/verifyToken")
 
 const {
   puntaje,
@@ -16,9 +16,9 @@ router.put("/", updateItem)
 router.delete("/:Id", deleteItem)
 
 router.get("/voto", readVotoById)
-router.post("/voto", verifyTokenEstudiante, votar)
-
-// router.get("/:Id/puntaje", readVotoById)
-router.put("/puntaje", verifyTokenEstudiante, puntaje)
+router.post("/voto", verifyTokenJuez, votar)
+router.post("/test", (req, res)=> {
+  res.json({si:"no"})
+})
 
 module.exports = router

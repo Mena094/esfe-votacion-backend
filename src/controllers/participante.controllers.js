@@ -73,21 +73,23 @@ const readVotoById = async (req, res) => {
 }
 //votar
 const votar = async (req, res) => {
-  const { IdEstudiante } = req;
-  const {CodigoParticipante} = req.body;
+  const { IdJuez } = req;
+  const { CodigoParticipante } = req.body;
+  const { Calificacion } = req.body;
 
   console.log({
-    IdEstudiante,CodigoParticipante
+    IdJuez,CodigoParticipante
   })
   if (
     
-    IdEstudiante === undefined ||
-    CodigoParticipante === undefined
+    IdJuez === undefined ||
+    CodigoParticipante === undefined ||
+    Calificacion === undefined 
   ) {
     res.status(409).json({ error: "Datos inválidos" });
     return;
   }
-  const resul = await db.votar( {IdEstudiante, CodigoParticipante} )
+  const resul = await db.votar( {IdJuez, CodigoParticipante, Calificacion} )
 
   if (resul === -1) {
     res.status(409).json({ error: "No existe estudiante con estudiante" })
@@ -100,6 +102,9 @@ const votar = async (req, res) => {
   }
   else if (resul === -4) {
     res.status(409).json({ error: "Concurso no esta activo" })
+  }
+  else if(resul === -5){
+    res.status(409).json({ error: "Calificación invalida" })
   }
   else {
     res.json(resul)

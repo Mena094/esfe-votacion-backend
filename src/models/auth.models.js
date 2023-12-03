@@ -1,17 +1,17 @@
 const pool = require("../shared/config/db.js")
 
-const authEstudiante = async ({ Codigo, IdAnio, IdCarrera }) => {
+const authJuez = async ({ Codigo }) => {
 
   //Verificar Existe Estudiante
-  let query = "SELECT * FROM Estudiante WHERE Codigo = ? AND IdAnio = ? AND IdCarrera = ?"
-  let values = [Codigo, IdAnio, IdCarrera]
-  const [estudiante] = await pool.query(query, values);
+  let query = "SELECT * FROM Juez WHERE Codigo = ?"
+  let values = [Codigo ]
+  const [juez] = await pool.query(query, values);
 
-  if (estudiante.length <= 0) return false; // No existe estudiante
-  return estudiante[0]
+  if (juez.length <= 0) return false; // No existe estudiante
+  return juez[0]
   
 }
 
 module.exports ={
-  authEstudiante
+  authJuez
 }
