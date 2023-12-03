@@ -1,4 +1,5 @@
 # ESFE Votación backend
+> MODIFICACIÓN PARA CONCURSO POR VOTO CON PUNTAJE
 
 Este documento proporciona una descripción general de la API del backend utilizada en el Sistema de Gestión de Concursos. 
 
@@ -10,9 +11,9 @@ Este documento proporciona una descripción general de la API del backend utiliz
 
 ## Base de datos
 
-![diagram](./doc/diagram.png)
+![diagram](./doc/diagram-calification.png.png)
 
-[para mas información sobre la base de datos click aqui](./doc/database.md)
+[para mas información sobre la base de datos click aqui](./doc/database.sql)
 ## Configuración
 
 Asegúrate de tener Node.js y MySQL instalados en tu entorno. Además, crea un archivo `.env` en la raíz del proyecto con la configuración necesaria, como la conexión a la base de datos y el puerto del servidor.
