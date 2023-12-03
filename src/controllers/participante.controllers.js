@@ -19,6 +19,23 @@ const readItems = async (req, res) => {
   }
 }
 
+const getByCodigo = async (req, res) => {
+  const codigo = req.params.codigo
+  const codigoJuez = req.params.codigoJuez
+
+  if(codigo == undefined || codigoJuez == undefined) {
+    res.status(500).json({ error: "Datos invalidos" })
+  }
+
+  const resul = await db.getByCodigo(codigo, codigoJuez)
+  if (resul === null || resul.participante === null) {
+    res.status(500).json({ error: "No se encontro" })
+  } else {
+    res.status(201).json(resul)
+  }
+}
+
+
 const createItem = async (req, res) => {
   const resul = await db.createItem(req.body)
   if (resul === 0) {
@@ -73,23 +90,23 @@ const readVotoById = async (req, res) => {
 }
 //votar
 const votar = async (req, res) => {
-  const { IdJuez } = req;
+  const { CodigoJuez } = req.body;
   const { CodigoParticipante } = req.body;
   const { Calificacion } = req.body;
 
   console.log({
-    IdJuez,CodigoParticipante
+    CodigoJuez,CodigoParticipante,Calificacion
   })
   if (
     
-    IdJuez === undefined ||
+    CodigoJuez === undefined ||
     CodigoParticipante === undefined ||
     Calificacion === undefined 
   ) {
     res.status(409).json({ error: "Datos inválidos" });
     return;
   }
-  const resul = await db.votar( {IdJuez, CodigoParticipante, Calificacion} )
+  const resul = await db.votar( {CodigoJuez, CodigoParticipante, Calificacion} )
 
   if (resul === -1) {
     res.status(409).json({ error: "No existe estudiante con estudiante" })
@@ -119,4 +136,5 @@ module.exports = {
   createItem,
   updateItem,
   deleteItem,
+  getByCodigo
 }

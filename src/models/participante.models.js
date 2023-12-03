@@ -21,6 +21,57 @@ const readItems = async () =>{
   }
 }
 
+const getByCodigo = async (CodigoParticipante, CodigoJuez) => {
+  try {
+    const queryParticipante = `
+    SELECT
+    p.Codigo,
+    p.Nombre,
+    c.Nombre as Categoria
+    FROM
+        Participante as p
+    JOIN
+        Categoria as c ON c.Id = p.IdCategoria
+    WHERE
+        p.Codigo = ? LIMIT 1;
+    `
+
+    const queryJuezVoto = `
+    SELECT
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM Voto as v
+            JOIN Participante as p ON v.IdParticipante = p.Id
+            JOIN Juez as j ON v.IdJuez = j.Id
+            WHERE j.Codigo = '123456' 
+                AND p.Codigo = 'fuap'
+        ) THEN
+            (SELECT Calificacion
+             FROM Voto as v
+             JOIN Participante as p ON v.IdParticipante = p.Id
+             JOIN Juez as j ON v.IdJuez = j.Id
+             WHERE j.Codigo = ? 
+                 AND p.Codigo = ?)
+        ELSE
+            NULL
+    END as ExistVoto
+
+    `
+    const [rowsParticipante] = await pool.query(queryParticipante, [CodigoParticipante]);
+    const [rowsJuezVoto] = await pool.query(queryJuezVoto, [CodigoJuez, CodigoParticipante]);
+    const participanteValue = rowsParticipante[0] || null;
+    const juezVotoValue = rowsJuezVoto[0] || null;
+    return {
+      data: participanteValue,
+      preVoto: juezVotoValue.ExistVoto
+    }
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
 const readVotoById = async (Id) =>{
   try{
     const [rows] = await pool.query("SELECT COUNT(*) as Total FROM Voto WHERE IdParticipante = ?",[Id])
@@ -111,8 +162,10 @@ const verificarConcursoActivo = async (IdCategoria) => {
   return result.length > 0 && result[0].Estado === 'iniciado';
 };
 
-const votar = async ({ IdJuez, CodigoParticipante, Calificacion}) => {
-  if(Calificacion > 5 || Calificacion < 0) return -5
+
+const votar = async ({ CodigoJuez, CodigoParticipante, Calificacion }) => {
+  if (Calificacion > 5 || Calificacion < 0) return -5;
+
   // Verificar la existencia del participante
   let query = `
     SELECT P.Id, P.IdCategoria, P.Nombre
@@ -134,6 +187,15 @@ const votar = async ({ IdJuez, CodigoParticipante, Calificacion}) => {
     return -4; // Concurso no activo
   }
 
+  // Obtener el ID del Juez usando el CodigoJuez
+  query = "SELECT Id FROM Juez WHERE Codigo = ?";
+  values = [CodigoJuez];
+  const [juez] = await pool.query(query, values);
+
+  if (juez.length <= 0) return -1; // No existe juez con el código proporcionado
+
+  const IdJuez = juez[0].Id;
+
   // Verificar si el participante tiene un voto existente
   query = "SELECT * FROM Voto WHERE IdJuez = ? AND IdParticipante = ?";
   values = [IdJuez, IdParticipante];
@@ -145,12 +207,13 @@ const votar = async ({ IdJuez, CodigoParticipante, Calificacion}) => {
   query = "INSERT INTO Voto (IdJuez, IdParticipante, Calificacion) VALUES (?,?,?)";
   values = [IdJuez, IdParticipante, Calificacion];
   const [voto] = await pool.query(query, values);
-  console.error("as" +  Nombre)
+
   return {
     success: "Nuevo voto agregado",
-    Nombre:Nombre
+    Nombre: Nombre
   };
 };
+
 
 
 module.exports = {
@@ -161,5 +224,6 @@ module.exports = {
   createItem,
   updateItem,
   deleteItem,
+  getByCodigo
   
 }

@@ -3,6 +3,7 @@ const { verifyTokenJuez } = require("../shared/middlewares/verifyToken")
 
 const {
   puntaje,
+  getByCodigo,
   readItems,
   readVotoById,
   createItem,
@@ -11,6 +12,7 @@ const {
   votar } = require("../controllers/participante.controllers")
 
 router.get("/", readItems)
+router.get("/:codigo/:codigoJuez", getByCodigo)
 router.post("/", createItem)
 router.put("/", updateItem)
 router.delete("/:Id", deleteItem)
