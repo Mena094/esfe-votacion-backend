@@ -162,7 +162,6 @@ const verificarConcursoActivo = async (IdCategoria) => {
   return result.length > 0 && result[0].Estado === 'iniciado';
 };
 
-
 const votar = async ({ CodigoJuez, CodigoParticipante, Calificacion }) => {
   if (Calificacion > 5 || Calificacion < 0) return -5;
 
@@ -199,20 +198,33 @@ const votar = async ({ CodigoJuez, CodigoParticipante, Calificacion }) => {
   // Verificar si el participante tiene un voto existente
   query = "SELECT * FROM Voto WHERE IdJuez = ? AND IdParticipante = ?";
   values = [IdJuez, IdParticipante];
-  const [exist] = await pool.query(query, values);
+  const [existingVote] = await pool.query(query, values);
 
-  if (exist.length > 0) return -3; // Voto existente para el participante
+  if (existingVote.length > 0) {
+    // Actualizar el voto existente en lugar de devolver -3
+    query = "UPDATE Voto SET Calificacion = ? WHERE Id = ?";
+    values = [Calificacion, existingVote[0].Id];
+    await pool.query(query, values);
 
-  // Insertar el nuevo voto
+    return {
+      success: "Voto actualizado",
+      Nombre: Nombre,
+      Calificacion: Calificacion
+    };
+  }
+
+  // Insertar el nuevo voto si no existe un voto previo
   query = "INSERT INTO Voto (IdJuez, IdParticipante, Calificacion) VALUES (?,?,?)";
   values = [IdJuez, IdParticipante, Calificacion];
   const [voto] = await pool.query(query, values);
 
   return {
     success: "Nuevo voto agregado",
-    Nombre: Nombre
+    Nombre: Nombre,
+    Calificacion: Calificacion
   };
 };
+
 
 
 
