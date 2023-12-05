@@ -1,4 +1,4 @@
-# ESFE Votación backend
+# ESFE Votación Backend
 > MODIFICACIÓN PARA CONCURSO POR VOTO CON PUNTAJE
 
 Este documento proporciona una descripción general de la API del backend utilizada en el Sistema de Gestión de Concursos. 
