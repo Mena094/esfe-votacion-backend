@@ -12,40 +12,96 @@ const readItems = async () => {
 
 const readCategoriaById = async (Id) => {
   try {
-    const [categories] = await pool.query("SELECT * FROM Categoria WHERE IdConcurso = ?",[Id]);
+    const query = `
+      SELECT 
+        C.Id AS CategoriaId,
+        C.Nombre AS Nombre,
+        C.Descripcion AS Descripcion,
+        C.IdConcurso AS IdConcurso,
+        P.Id AS ParticipanteId, 
+        P.Nombre AS ParticipanteNombre,
+        P.Codigo AS ParticipanteCodigo,
+        COUNT(V.Id) AS ConteoVotos,
+        SUM(V.Calificacion) AS SumaCalificaciones,
+        AVG(V.Calificacion) AS PromedioCalificacion,
+        Pt.Puntaje AS Puntuacion
+      FROM Categoria C
+      LEFT JOIN Participante P ON C.Id = P.IdCategoria
+      LEFT JOIN Voto V ON P.Id = V.IdParticipante
+      LEFT JOIN Puntaje Pt ON P.Id = Pt.IdParticipante
+      WHERE C.IdConcurso = ?
+      GROUP BY C.Id, P.Id, Pt.Id
+    `;
 
-    for (const category of categories) {
-      const [participants] = await pool.query(
-        "SELECT * FROM Participante WHERE IdCategoria = ?",
-        [category.Id]
-      );
+    const [result] = await pool.query(query, [Id]);
 
-      // Obtener el tipo de concurso desde el objeto "Concurso" asociado a la categoría
-      const [concurso] = await pool.query(
-        "SELECT Tipo FROM Concurso WHERE Id = ?",
-        [category.IdConcurso]
-      );
+    const categories = [];
 
-      // Asignar los participantes a la propiedad "Participantes" de la categoría
-      
-      for (const participant of participants) {
-      
-        if (concurso[0].Tipo === "votacion") {
-          const [voteCount] = await pool.query(
-            "SELECT COUNT(*) AS Count FROM Voto WHERE IdParticipante = ?",
-            [participant.Id]
-          );
-          participant.ConteoVotos = voteCount[0].Count;
-        } else if (concurso[0].Tipo === "puntaje") {
-          const [score] = await pool.query(
-            "SELECT Puntaje FROM Puntaje WHERE IdParticipante = ?",
-            [participant.Id]
-          );
-          participant.Puntaje = score[0].Puntaje;
+    result.forEach((row) => {
+      const categoryIndex = categories.findIndex((c) => c.CategoriaId === row.CategoriaId);
+
+      if (categoryIndex === -1) {
+        const category = {
+          CategoriaId: row.CategoriaId,
+          Nombre: row.Nombre,
+          Descripcion: row.Descripcion,
+          IdConcurso: row.IdConcurso,
+          Participantes: [],
+        };
+
+        if (row.ParticipanteId) {
+          const participant = {
+            Id: row.ParticipanteId,
+            Nombre: row.ParticipanteNombre,
+            Codigo: row.ParticipanteCodigo,
+          };
+
+          if (row.ConteoVotos !== null) {
+            participant.ConteoVotos = row.ConteoVotos;
+          }
+
+          if (row.SumaCalificaciones !== null) {
+            participant.SumaCalificaciones = row.SumaCalificaciones;
+          }
+
+          if (row.PromedioCalificacion !== null) {
+            participant.PromedioCalificacion = row.PromedioCalificacion;
+          }
+
+          if (row.Puntuacion !== null) {
+            participant.Puntuacion = row.Puntuacion;
+          }
+
+          category.Participantes.push(participant);
         }
+
+        categories.push(category);
+      } else {
+        const participant = {
+          Id: row.ParticipanteId,
+          Nombre: row.ParticipanteNombre,
+          Codigo: row.ParticipanteCodigo,
+        };
+
+        if (row.ConteoVotos !== null) {
+          participant.ConteoVotos = row.ConteoVotos;
+        }
+
+        if (row.SumaCalificaciones !== null) {
+          participant.SumaCalificaciones = row.SumaCalificaciones;
+        }
+
+        if (row.PromedioCalificacion !== null) {
+          participant.PromedioCalificacion = row.PromedioCalificacion;
+        }
+
+        if (row.Puntuacion !== null) {
+          participant.Puntuacion = row.Puntuacion;
+        }
+
+        categories[categoryIndex].Participantes.push(participant);
       }
-      category.Participantes = participants;
-    }
+    });
 
     return categories;
   } catch (e) {
@@ -53,6 +109,7 @@ const readCategoriaById = async (Id) => {
     return [];
   }
 };
+
 
 
 const createItem = async ({ Nombre, Descripcion, Estado, Tipo }) => {
